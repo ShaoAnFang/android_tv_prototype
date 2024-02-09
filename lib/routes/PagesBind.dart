@@ -1,10 +1,10 @@
-import 'package:android_tv_prototype/pages/searchPage/repositories/SearchPageRepositories.dart';
+import 'package:android_tv_prototype/pages/SearchPage/repositories/SearchPageRepositories.dart';
 import 'package:get/get.dart';
 import '../pages/HomePage/HomePageController.dart';
 import '../pages/HomePage/repositories/HomePageRepositoriesImpl.dart';
 import '../pages/IssueDetailPage/IssueDetailPageController.dart';
 import '../pages/IssueDetailPage/repositories/IssueDetailPageRepositoriesImpl.dart';
-import '../pages/searchPage/SearchPageController.dart';
+import '../pages/SearchPage/SearchPageController.dart';
 
 class PagesBind implements Bindings {
   @override

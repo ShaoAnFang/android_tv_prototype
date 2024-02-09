@@ -12,7 +12,7 @@ import '../../style/color.dart';
 import '../../utils/AudioService.dart';
 import '../../utils/ImageCache.dart';
 import '../IssueDetailPage/IssueDetailPage.dart';
-import '../searchPage/SearchPage.dart';
+import '../SearchPage/SearchPage.dart';
 import 'HomePageController.dart';
 
 class HomePage extends GetView<HomePageController> {
