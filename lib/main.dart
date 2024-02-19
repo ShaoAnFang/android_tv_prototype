@@ -19,13 +19,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       builder: (context, child) => MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)), child: child!),
       debugShowCheckedModeBanner: false,
-      // themeMode: ThemeMode.dark,
       initialRoute: AppPages.initPage,
       getPages: AppPages.routes,
       defaultTransition: Transition.cupertino,
       enableLog: true,
       theme: AppTheme.light,
-      // home: MainPage(),
     );
   }
 }

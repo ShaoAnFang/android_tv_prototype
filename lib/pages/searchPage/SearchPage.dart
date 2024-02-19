@@ -2,7 +2,7 @@ import '../../components/FocusWidget.dart';
 import '../../components/ShimmerWidget.dart';
 import '../../components/VideoPlayerPage/VideoPlayerPage.dart';
 import '../../utils/ImageCache.dart';
-import '../searchPage/SearchPageController.dart';
+import 'SearchPageController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
@@ -15,11 +16,21 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   final HomePageRepository homePageRepository;
 
   final _isLoading = true.obs;
-  set isLoading(value) => _isLoading.value = value;
+  set isLoading(value) {
+    _isLoading.value = value;
+    if (!value) setPreviewTimer();
+  }
+
   get isLoading => _isLoading.value;
 
   final _movieList = <MovieModel>[].obs;
   List<MovieModel> get movieList => _movieList.toList();
+
+  final _mainMovieList = <MovieModel>[].obs;
+  List<MovieModel> get mainMovieList => _mainMovieList.toList();
+
+  final _popularMovieList = <MovieModel>[].obs;
+  List<MovieModel> get popularMovieList => _popularMovieList.toList();
 
   final _onFocusIndex = 0.obs;
   set onFocusIndex(value) => _onFocusIndex.value = value;
@@ -27,20 +38,13 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
 
   late PageController pageController;
   int page = 1;
+  int popularPage = 1;
 
   bool isMobile = false;
 
-  final _isDrawerExpanded = false.obs;
-  set isDrawerExpanded(value) {
-    if (value) {
-      controller.forward();
-    } else {
-      controller.reverse();
-    }
-    _isDrawerExpanded.value = value;
-  }
-
-  get isDrawerExpanded => _isDrawerExpanded.value;
+  final _drawerCategory = "主頁".obs;
+  set drawerCategory(value) => _drawerCategory.value = value;
+  String get drawerCategory => _drawerCategory.value;
 
   final _pageViewCurrentindex = 0.obs;
   set pageViewCurrentindex(value) => _pageViewCurrentindex.value = value;
@@ -55,22 +59,23 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   late AnimationController controller;
 
   FocusNode? keepFocusNode;
+
+  final _previewPlay = false.obs;
+  set previewPlay(value) => _previewPlay.value = value;
+  bool get previewPlay => _previewPlay.value;
+
+  int previewCountDownTime = 8;
+  late Timer previewTimer;
+
+  // final _isSearch = false.obs;
+  // set isSearch(value) => _isSearch.value = value;
+  // get isSearch => _isSearch.value;
+
   @override
   void onInit() async {
     WidgetsBinding.instance.addObserver(this);
-    pageController = PageController(viewportFraction: 0.8, keepPage: true);
+    pageController = PageController(viewportFraction: 0.85, keepPage: true);
     _drawerFocusNodes.addAll(List<FocusNode>.generate(7, (index) => FocusNode()));
-    controller = AnimationController(
-      // value: 0.4,
-      vsync: this,
-      duration: const Duration(milliseconds: 382),
-    )..addListener(() {
-        if (controller.status == AnimationStatus.completed) {
-          isDrawerExpanded = true;
-        } else if (controller.status == AnimationStatus.reverse) {
-          isDrawerExpanded = false;
-        }
-      });
 
     final startTime = DateTime.now();
     // for (final _ in [1, 2, 3]) {
@@ -111,16 +116,56 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   @override
   onClose() {
     controller.dispose();
+    previewTimer.cancel();
     super.onClose();
+  }
+
+  setPreviewTimer() {
+    previewCountDownTime = 8;
+    previewPlay = false;
+    previewTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (previewCountDownTime == 0) {
+        previewPlay = true;
+        timer.cancel();
+      } else {
+        previewCountDownTime--;
+        previewPlay = false;
+      }
+    });
   }
 
   fetchData() async {
     isLoading = true;
+    _movieList.clear();
+
     final dataList = await homePageRepository.getMoives(page: '$page');
-    log("dataList length ${dataList.length.toString()}");
-    _movieList.addAll(dataList);
+    log("GetMoives dataList length ${dataList.length.toString()}");
+
     page += 1;
-    if (page <= 3) await fetchData();
+    if (page <= 3) {
+      _mainMovieList.addAll(dataList);
+      await fetchData();
+    } else {
+      _mainMovieList.addAll(dataList);
+      _movieList.addAll(_mainMovieList);
+    }
+    isLoading = false;
+  }
+
+  fetchPopularData() async {
+    isLoading = true;
+    _movieList.clear();
+
+    final dataList = await homePageRepository.getMoviePopular(page: '$popularPage');
+    log("GetMoviePopular dataList length ${dataList.length.toString()}");
+    popularPage += 1;
+    if (popularPage <= 3) {
+      _popularMovieList.addAll(dataList);
+      await fetchPopularData();
+    } else {
+      _popularMovieList.addAll(dataList);
+      _movieList.addAll(_popularMovieList);
+    }
     isLoading = false;
   }
 }
