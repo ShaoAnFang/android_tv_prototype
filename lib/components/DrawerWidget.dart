@@ -83,6 +83,7 @@ class _DrawerWidgetState extends State<DrawerWidget> with TickerProviderStateMix
                 _drawerWidgetCell(context, 2, const Icon(Icons.arrow_outward_outlined, color: Colors.white), '新鮮熱播'),
                 _drawerWidgetCell(context, 3, const Icon(Icons.monitor, color: Colors.white), '劇集'),
                 _drawerWidgetCell(context, 4, const Icon(Icons.movie_outlined, color: Colors.white), '電影'),
+                _drawerWidgetCell(context, 4, const Icon(Icons.live_tv, color: Colors.white), '電視'),
                 _drawerWidgetCell(context, 5, const Icon(Icons.category_outlined, color: Colors.white), '類別'),
                 _drawerWidgetCell(context, 6, const Icon(Icons.add, color: Colors.white), '我的列表'),
               ],

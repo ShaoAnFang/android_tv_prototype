@@ -70,7 +70,7 @@ class SearchpagePage extends GetView<SearchPageController> {
                         focusChange: (bool hasFocus, FocusNode? focusNode) {},
                         isLeftEdge: index == 0,
                         isRightEdge: index == 5,
-                        onclick: () {
+                        onclick: (_) {
                           Get.to(
                             () => VideoPlayerPage(
                               videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
@@ -108,7 +108,7 @@ class SearchpagePage extends GetView<SearchPageController> {
                         focusChange: (bool hasFocus, FocusNode? focusNode) {},
                         isLeftEdge: index == 0,
                         isRightEdge: index == 5,
-                        onclick: () {
+                        onclick: (_) {
                           Get.to(
                             () => VideoPlayerPage(
                               videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',

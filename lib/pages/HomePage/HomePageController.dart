@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:android_tv_prototype/entityies/tv_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import '../../entityies/movie_model.dart';
+import '../../entityies/live_tv_model.dart';
 import 'repositories/HomePageRepositories.dart';
 import 'package:intl/intl.dart';
 
@@ -18,10 +21,14 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   final _isLoading = true.obs;
   set isLoading(value) {
     _isLoading.value = value;
-    if (!value) setPreviewTimer();
+    // if (!value) setPreviewTimer();
   }
 
   get isLoading => _isLoading.value;
+
+  final _isMovie = true.obs;
+  set isMovie(value) => _isMovie.value = value;
+  bool get isMovie => _isMovie.value;
 
   final _movieList = <MovieModel>[].obs;
   List<MovieModel> get movieList => _movieList.toList();
@@ -32,6 +39,9 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   final _popularMovieList = <MovieModel>[].obs;
   List<MovieModel> get popularMovieList => _popularMovieList.toList();
 
+  final _tvSeriesList = <TVModel>[].obs;
+  List<TVModel> get tvSeriesList => _tvSeriesList.toList();
+
   final _onFocusIndex = 0.obs;
   set onFocusIndex(value) => _onFocusIndex.value = value;
   int get onFocusIndex => _onFocusIndex.value;
@@ -39,6 +49,7 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   late PageController pageController;
   int page = 1;
   int popularPage = 1;
+  int tvPage = 1;
 
   bool isMobile = false;
 
@@ -77,8 +88,10 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
     pageController = PageController(viewportFraction: 0.85, keepPage: true);
     _drawerFocusNodes.addAll(List<FocusNode>.generate(7, (index) => FocusNode()));
 
+    await readLocalChannelJson();
     final startTime = DateTime.now();
     // for (final _ in [1, 2, 3]) {
+
     await fetchData();
     // }
 
@@ -116,7 +129,7 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
   @override
   onClose() {
     controller.dispose();
-    previewTimer.cancel();
+    // previewTimer.cancel();
     super.onClose();
   }
 
@@ -134,6 +147,7 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
     });
   }
 
+  //discover movie
   fetchData() async {
     isLoading = true;
     _movieList.clear();
@@ -148,6 +162,7 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
     } else {
       _mainMovieList.addAll(dataList);
       _movieList.addAll(_mainMovieList);
+      isMovie = true;
     }
     isLoading = false;
   }
@@ -165,7 +180,36 @@ class HomePageController extends GetxController with SingleGetTickerProviderMixi
     } else {
       _popularMovieList.addAll(dataList);
       _movieList.addAll(_popularMovieList);
+      isMovie = true;
     }
     isLoading = false;
+  }
+
+  //discover tv
+  fetchTvData() async {
+    isLoading = true;
+    // _movieList.clear();
+
+    final dataList = await homePageRepository.getTvSeries(page: '$popularPage');
+    log("Get TvData dataList length ${dataList.length.toString()}");
+    tvPage += 1;
+    // if (tvPage <= 3) {
+    //   _tvSeriesList.addAll(dataList);
+    //   await fetchTvData();
+    // } else {
+    _tvSeriesList.addAll(dataList);
+    // _movieList.addAll(_popularMovieList);
+    isMovie = false;
+    // }
+    isLoading = false;
+  }
+
+  Future<void> readLocalChannelJson() async {
+    final response = await rootBundle.loadString('assets/channels.json');
+    final data = await json.decode(response);
+    List<LiveTVModel> liveTVModels = List<LiveTVModel>.from(data.map((e) => LiveTVModel.fromJson(e)));
+
+    // log(data.toString());
+    // log(liveTVModels.toString());
   }
 }

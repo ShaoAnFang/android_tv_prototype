@@ -8,7 +8,7 @@ class TextToast {
       msg: content,
       timeInSecForIosWeb: 3,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.TOP,
       backgroundColor: Colors.black87,
       textColor: Colors.white,
       fontSize: 20.0,

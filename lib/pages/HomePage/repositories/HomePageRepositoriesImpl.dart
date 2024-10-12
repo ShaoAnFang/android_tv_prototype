@@ -13,4 +13,8 @@ class HomePageRepositoryImpl implements HomePageRepository {
   Future getMoviePopular({String page = '1'}) async {
     return await api.getMoviePopular(page: page);
   }
+  @override
+  Future getTvSeries({String page = '1'}) async {
+    return await api.getTvSeries(page: page);
+  }
 }

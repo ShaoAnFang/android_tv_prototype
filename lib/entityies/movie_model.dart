@@ -18,25 +18,26 @@ class MovieModel {
 
   MovieModel.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
-    backdropPath = json['backdrop_path'];
+    backdropPath = json['backdrop_path'] ?? '';
     if (json['genre_id'] != null && json['genre_id'].isNotEmpty) {
       genreIds = List<int>.generate(json['genre_id'].length, (index) => json['genre_ids'][index]);
     }
-    id = json['id'];
-    originalLanguage = json['original_language'];
-    originalTitle = json['original_title'];
-    overview = json['overview'];
-    popularity = json['popularity'];
-    posterPath = json['poster_path'];
-    releaseDate = json['release_date'];
-    title = json['title'];
-    video = json['video'];
-    if (json['vote_average'] is int) {
+    id = json['id'] ?? 0;
+    originalLanguage = json['original_language'] ?? "";
+    originalTitle = json['original_title'] ?? "";
+    overview = json['overview'] ?? "";
+    popularity = json['popularity'] ?? 0.0;
+    posterPath = json['poster_path'] ?? "";
+    releaseDate = json['release_date'] ?? "";
+    title = json['title'] ?? "";
+    video = json['video'] ?? "";
+    if (json['vote_average'] != null || json['vote_average'] is int) {
       voteAverage = json['vote_average'].toDouble();
     } else {
-      voteAverage = json['vote_average'];
+      voteAverage = json['vote_average'] ;
     }
-    voteCount = json['vote_count'];
+    voteCount = json['vote_count'] ?? 0;
+    
   }
 
   Map<String, dynamic> toJson() {

@@ -36,7 +36,7 @@ class ShimmerWidget extends StatelessWidget {
         height: height,
         decoration: ShapeDecoration(
           color: Colors.grey[400]!,
-          shape: isCircle ? CircleBorder() : shapeBorder,
+          shape: isCircle ? const CircleBorder() : shapeBorder,
         ),
       ),
       baseColor: Colors.grey[400]!,
@@ -61,7 +61,7 @@ class ListViewShimmer extends StatelessWidget {
           shrinkWrap: true,
           itemCount: cellCount,
           itemBuilder: (BuildContext context, int index) {
-            return ListViewShimmerCard();
+            return const ListViewShimmerCard();
           },
         ),
       ],

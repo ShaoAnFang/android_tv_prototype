@@ -8,6 +8,12 @@ import 'package:get/get.dart';
 import '../utils/AudioService.dart';
 import 'VideoPlayerPage/VideoPlayerPage.dart';
 
+const String keyUp = 'Arrow Up';
+const String keyDown = 'Arrow Down';
+const String keyLeft = 'Arrow Left';
+const String keyRight = 'Arrow Right';
+const String keyCenter = 'Select';
+
 class FocusWidget extends StatefulWidget {
   FocusWidget({
     Key? key,
@@ -18,19 +24,22 @@ class FocusWidget extends StatefulWidget {
     this.requestFocus = false,
     this.isRightEdge = false,
     this.isLeftEdge = false,
+    this.isPlayer = false,
     this.needScalTransition = false,
     this.focusNode,
   }) : super(key: key);
 
   Widget child;
-  onFocusChange? focusChange;
-  onClick onclick;
+  Function(bool hasFocus, FocusNode? focusNode) focusChange;
+  Function(String key) onclick;
   bool requestFocus;
   BoxDecoration? decoration;
   bool isRightEdge;
   bool isLeftEdge;
+  bool isPlayer;
   FocusNode? focusNode;
   bool needScalTransition;
+  Function(int index, bool hasFocus)? onFocusChange;
 
   @override
   State<StatefulWidget> createState() {
@@ -38,13 +47,8 @@ class FocusWidget extends StatefulWidget {
   }
 }
 
-typedef void onFocusChange(bool hasFocus, FocusNode? focusNode);
-typedef void onClick();
-const String keyUp = 'Arrow Up';
-const String keyDown = 'Arrow Down';
-const String keyLeft = 'Arrow Left';
-const String keyRight = 'Arrow Right';
-const String keyCenter = 'Select';
+// typedef void onFocusChange(bool hasFocus, FocusNode? focusNode);
+// typedef void onClick(String key);
 
 class FocusWidgetState extends State<FocusWidget> {
   FocusNode focusNode = FocusNode();
@@ -103,13 +107,13 @@ class FocusWidgetState extends State<FocusWidget> {
     return Focus(
         autofocus: widget.requestFocus,
         focusNode: focusNode,
-        onKey: (FocusNode focusNode, RawKeyEvent event) {
-          if (event is RawKeyUpEvent) return KeyEventResult.handled;
+        onKeyEvent: (FocusNode focusNode, KeyEvent event) {
+          if (event is KeyUpEvent) return KeyEventResult.handled;
           AudioService().playSound(AssetSource('sounds/mixkit-modern-technology-select-3124.wav'));
           log("keyLabel: ${event.logicalKey.keyLabel}");
           switch (event.logicalKey.keyLabel) {
             case keyCenter:
-              widget.onclick();
+              widget.onclick(keyCenter);
               break;
             case keyUp:
               FocusScope.of(context).focusInDirection(TraversalDirection.up);
@@ -121,14 +125,23 @@ class FocusWidgetState extends State<FocusWidget> {
 
             case keyLeft:
               FocusScope.of(context).focusInDirection(TraversalDirection.left);
+              if (widget.isPlayer) {
+                widget.onclick(keyLeft);
+              }
               break;
             case keyRight:
-              if (widget.isRightEdge) return KeyEventResult.handled; //handled == 不處理
+              if (widget.isRightEdge) {
+                return KeyEventResult.handled; //handled == 不處理
+              }
+              if (widget.isPlayer) {
+                widget.onclick(keyRight);
+              }
               FocusScope.of(context).focusInDirection(TraversalDirection.right);
               break;
           }
           return KeyEventResult.handled;
         },
+
         // RawKeyboardListener(
         // onKey: (RawKeyEvent event) {
         //   if (event is RawKeyDownEvent) {

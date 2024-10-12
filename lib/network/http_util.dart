@@ -17,7 +17,6 @@ class HttpUtil {
     options.receiveTimeout = const Duration(seconds: 15);
     options.connectTimeout = const Duration(seconds: 15);
     options.contentType = 'application/json';
-
     dio = Dio(options);
 
     // dio.interceptors.add(CookieManager(CookieJar()));
@@ -36,9 +35,15 @@ class HttpUtil {
       return handler.next(error);
     }));
   }
+  setTokenToOptions() {
+    dio.options.headers["Authorization"] =
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZDBiMDkyNjNkYjlmZDU0MGQyZWUwOGM2MmY3M2I4ZSIsInN1YiI6IjY1OWJjNDNkMjE2MjFkMDA5NWI0NDY2OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.8o_J7aSc5PeNTkBWaGnAeZXExo-QyhpuMoszmRr-wiQ";
+  }
 
   Future get(String path, {dynamic params, Options? options, CancelToken? cancelToken}) async {
     try {
+      setTokenToOptions();
+      params["language"] = "zh-TW";
       var response = await dio.get(path, queryParameters: params, cancelToken: cancelToken);
       return response;
     } on DioException catch (e) {
@@ -50,6 +55,8 @@ class HttpUtil {
 
   Future post(String path, {dynamic params, Options? options, CancelToken? cancelToken}) async {
     try {
+      setTokenToOptions();
+      params["language"] = "zh-TW";
       var response = await dio.post(path, options: options, data: params, cancelToken: cancelToken);
       return response;
     } on DioException catch (e) {
